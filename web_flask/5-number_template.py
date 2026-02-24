@@ -1,64 +1,55 @@
 #!/usr/bin/python3
-"""5-number_template.py: Flask app to display integers via templates"""
+"""Start web application with two routings
+"""
 
 from flask import Flask, render_template
-
-# Initialize the Flask application
 app = Flask(__name__)
 
 
-@app.route('/', strict_slashes=False)
-def hello_hbnb():
-    """Display 'Hello HBNB!' on the root route"""
-    return "Hello HBNB!"
+@app.route('/')
+def hello():
+    """Return string when route queried
+    """
+    return 'Hello HBNB!'
 
 
-@app.route('/hbnb', strict_slashes=False)
+@app.route('/hbnb')
 def hbnb():
-    """Display 'HBNB' on the /hbnb route"""
-    return "HBNB"
-
-
-@app.route('/c/<text>', strict_slashes=False)
-def c_text(text):
+    """Return string when route queried
     """
-    Display 'C <text>' where underscores in <text> are replaced by spaces
-    Example: /c/hello_world => 'C hello world'
+    return 'HBNB'
+
+
+@app.route('/c/<text>')
+def c_is_fun(text):
+    """Return reformatted text
     """
-    text = text.replace('_', ' ')
-    return f"C {text}"
+    return 'C ' + text.replace('_', ' ')
 
 
-@app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
-@app.route('/python/<text>', strict_slashes=False)
-def python_text(text):
+@app.route('/python/')
+@app.route('/python/<text>')
+def python_with_text(text='is cool'):
+    """Reformat text based on optional variable
     """
-    Display 'Python <text>' where underscores in <text> are replaced by spaces.
-    Default text is 'is cool' if not provided
-    Example: /python/awesome => 'Python awesome'
+    return 'Python ' + text.replace('_', ' ')
+
+
+@app.route('/number/<int:n>')
+def number(n=None):
+    """Allow request if path variable is a valid integer
     """
-    text = text.replace('_', ' ')
-    return f"Python {text}"
+    return str(n) + ' is a number'
 
 
-@app.route('/number/<int:n>', strict_slashes=False)
-def number(n):
-    """
-    Display '<n> is a number' only if n is an integer.
-    Routes like /number/3.5 or /number/abc will give 404
-    """
-    return f"{n} is a number"
-
-
-@app.route('/number_template/<int:n>', strict_slashes=False)
+@app.route('/number_template/<int:n>')
 def number_template(n):
+    """Retrieve template for request
     """
-    Render an HTML template displaying 'Number: n' in an H1 tag.
-    Only accepts integers, invalid inputs give 404.
-    """
-    return render_template('5-number.html', n=n)
+    path = '5-number.html'
+    return render_template(path, n=n)
 
 
-# Run the Flask app on 0.0.0.0:5000
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.url_map.strict_slashes = False
+    app.run(host='0.0.0.0', port=5000
