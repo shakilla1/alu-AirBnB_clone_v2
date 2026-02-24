@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HBNB Filters</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h3 { color: #333; }
+        ul { list-style-type: none; padding-left: 20px; }
+        li { margin: 3px 0; }
+        .popover { max-height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>States</h1>
+    <div class="popover">
+        <ul>
+        {% for state in states %}
+            <li>{{ state.id }}: <b>{{ state.name }}</b>
+                <ul>
+                {% for city in state.cities|sort(attribute='name') %}
+                    <li>{{ city.id }}: <b>{{ city.name }}</b></li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <h3>Amenities</h3>
+    <div class="popover">
+        <ul>
+        {% for amenity in amenities %}
+            <li>{{ amenity.id }}: <b>{{ amenity.name }}</b></li>
+        {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
