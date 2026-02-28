@@ -47,4 +47,9 @@ def number_template(n):
     """Retrieve template for request
     """
     path = '5-number.html'
-    
+    return render_template(path, n=n)
+
+
+if __name__ == '__main__':
+    app.url_map.strict_slashes = False
+    app.run(host='0.0.0.0', port=5000
