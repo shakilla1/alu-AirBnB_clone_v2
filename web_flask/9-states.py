@@ -27,7 +27,12 @@ def states(state_id=None):
                                state=None,
                                cities=None)
 
-    state = storage.all(State).get("State." + state_id)
+    # SAFE lookup (works in both storages)
+    state = None
+    for s in storage.all(State).values():
+        if s.id == state_id:
+            state = s
+            break
 
     if state is None:
         return render_template("9-states.html",
@@ -35,6 +40,7 @@ def states(state_id=None):
                                state="Not found!",
                                cities=None)
 
+    # Correct city loading
     if storage.__class__.__name__ == "DBStorage":
         cities = sorted(state.cities, key=lambda c: c.name)
     else:
