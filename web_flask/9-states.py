@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+Starts a Flask web application
+"""
+
 from flask import Flask, render_template
 from models import storage
 from models.state import State
@@ -8,12 +12,14 @@ app = Flask(__name__)
 
 @app.teardown_appcontext
 def teardown(exception):
+    """Remove current SQLAlchemy session"""
     storage.close()
 
 
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<state_id>', strict_slashes=False)
 def states(state_id=None):
+    """Displays states and cities"""
     states = list(storage.all(State).values())
     states.sort(key=lambda s: s.name)
 
@@ -24,14 +30,13 @@ def states(state_id=None):
         for s in states:
             if s.id == state_id:
                 state = s
-                # Handle DBStorage vs FileStorage
-                if hasattr(s, "cities"):
+                if storage.__class__.__name__ == "DBStorage":
                     cities = sorted(s.cities, key=lambda c: c.name)
                 else:
                     cities = sorted(s.cities(), key=lambda c: c.name)
                 break
 
-        if not state:
+        if state is None:
             state = "Not found!"
 
     return render_template("9-states.html",
