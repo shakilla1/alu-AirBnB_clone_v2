@@ -20,11 +20,14 @@ def teardown(exception):
 @app.route("/cities_by_states", strict_slashes=False)
 def cities_by_states():
     """Render HTML page with states and their cities"""
-    # get all states
     all_states = storage.all(State)
-    # sort states by name
-    states = sorted(all_states.values(),
-                    key=lambda s: s.name if s.name else "")
+    states = sorted(all_states.values(), key=lambda s: s.name if s.name else "")
+
+    # Ensure state.cities is always iterable (for FileStorage)
+    for state in states:
+        if hasattr(state, "cities") and callable(state.cities):
+            state.cities = state.cities()
+
     return render_template("8-cities_by_states.html", states=states)
 
 
