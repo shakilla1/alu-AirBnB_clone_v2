@@ -19,25 +19,23 @@ def teardown(exception):
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<state_id>', strict_slashes=False)
 def states(state_id=None):
-    """Displays states and cities"""
-    states = list(storage.all(State).values())
-    states.sort(key=lambda s: s.name)
+    """Display states and cities"""
+    states = sorted(storage.all(State).values(),
+                    key=lambda s: s.name)
 
     state = None
     cities = None
 
     if state_id:
-        for s in states:
-            if s.id == state_id:
-                state = s
-                if storage.__class__.__name__ == "DBStorage":
-                    cities = sorted(s.cities, key=lambda c: c.name)
-                else:
-                    cities = sorted(s.cities(), key=lambda c: c.name)
-                break
+        state = storage.all(State).get("State." + state_id)
 
         if state is None:
             state = "Not found!"
+        else:
+            if storage.__class__.__name__ == "DBStorage":
+                cities = sorted(state.cities, key=lambda c: c.name)
+            else:
+                cities = sorted(state.cities(), key=lambda c: c.name)
 
     return render_template("9-states.html",
                            states=states,
