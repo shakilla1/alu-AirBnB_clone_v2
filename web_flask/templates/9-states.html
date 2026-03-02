@@ -5,21 +5,27 @@
     <title>HBNB</title>
 </head>
 <body>
-    {% if selected_state %}
-        <h1>State: {{ selected_state.name }}</h1>
-        <h3>Cities:</h3>
-        <ul>
-            {% for city in selected_state.cities|sort(attribute='name') %}
-                <li>{{ city.id }}: <b>{{ city.name }}</b></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <h1>States</h1>
-        <ul>
-            {% for state in states %}
-                <li>{{ state.id }}: <b>{{ state.name }}</b></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+
+{% if state == "Not found!" %}
+    <h1>Not found!</h1>
+
+{% elif state %}
+    <h1>State: {{ state.name }}</h1>
+    <h3>Cities:</h3>
+    <ul>
+        {% for city in cities %}
+            <li>{{ city.id }}: <b>{{ city.name }}</b></li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <h1>States</h1>
+    <ul>
+        {% for s in states %}
+            <li>{{ s.id }}: <b>{{ s.name }}</b></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
 </body>
 </html>
