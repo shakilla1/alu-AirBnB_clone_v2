@@ -16,24 +16,24 @@ class State(BaseModel, Base):
 
     name = Column(String(128), nullable=False)
 
+    # DBStorage: define relationship only if DB
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-        # DBStorage: define relationship
         cities = relationship(
             'City',
             backref="state",
             cascade="all, delete, delete-orphan"
         )
 
+    # FS mode: always define property, even in DB mode
     @property
     def cities(self):
         """
-        FileStorage: return list of City instances with state_id equal to
-        the current State.id
+        Returns list of City instances linked to the State.
+        Works for FileStorage engine.
         """
         if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-            return []  # DBStorage uses relationship
-        city_list = []
-        for city in models.storage.all(City).values():
-            if city.state_id == self.id:
-                city_list.append(city)
-        return city_list
+            # In DB, the relationship handles cities
+            return self.__dict__.get('cities', [])
+        # FileStorage: return filtered list
+        return [c for c in models.storage.all(City).values()
+                if c.state_id == self.id]
