@@ -22,8 +22,12 @@ def teardown(exception):
 def states_list():
     """Render an HTML page with all State objects sorted by name"""
     all_states = storage.all(State)
-    states = sorted(all_states.values(), key=lambda s: s.name if s.name else "")
-    return render_template("7-states_list.html", states=states)
+    states = sorted(all_states.values(),
+                    key=lambda s: s.name if s.name else "")
+    return render_template(
+        "7-states_list.html",
+        states=states
+    )
 
 
 if __name__ == "__main__":
