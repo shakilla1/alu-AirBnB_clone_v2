@@ -12,33 +12,36 @@ app = Flask(__name__)
 
 @app.teardown_appcontext
 def teardown(exception):
-    """Remove current SQLAlchemy session"""
     storage.close()
 
 
 @app.route('/states', strict_slashes=False)
 @app.route('/states/<state_id>', strict_slashes=False)
 def states(state_id=None):
-    """Display states and cities"""
-    states = sorted(storage.all(State).values(),
-                    key=lambda s: s.name)
 
-    state = None
-    cities = None
+    if state_id is None:
+        states = sorted(storage.all(State).values(),
+                        key=lambda s: s.name)
+        return render_template("9-states.html",
+                               states=states,
+                               state=None,
+                               cities=None)
 
-    if state_id:
-        state = storage.all(State).get("State." + state_id)
+    state = storage.all(State).get("State." + state_id)
 
-        if state is None:
-            state = "Not found!"
-        else:
-            if storage.__class__.__name__ == "DBStorage":
-                cities = sorted(state.cities, key=lambda c: c.name)
-            else:
-                cities = sorted(state.cities(), key=lambda c: c.name)
+    if state is None:
+        return render_template("9-states.html",
+                               states=None,
+                               state="Not found!",
+                               cities=None)
+
+    if storage.__class__.__name__ == "DBStorage":
+        cities = sorted(state.cities, key=lambda c: c.name)
+    else:
+        cities = sorted(state.cities(), key=lambda c: c.name)
 
     return render_template("9-states.html",
-                           states=states,
+                           states=None,
                            state=state,
                            cities=cities)
 
