@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """
 Flask app to display all States and their Cities.
-Handles DBStorage and FileStorage.
+Works with both DBStorage and FileStorage.
 """
 
 from flask import Flask, render_template
@@ -23,17 +23,19 @@ def cities_by_states():
     all_states = storage.all(State)
     states = sorted(all_states.values(), key=lambda s: s.name if s.name else "")
 
-    # Create a dictionary state_id -> list of cities (sorted)
+    # Map state_id -> sorted list of cities
     state_cities = {}
     for state in states:
-        cities = []
-        # DBStorage: attribute
         if hasattr(state, "cities") and not callable(state.cities):
+            # DBStorage
             cities = state.cities
-        # FileStorage: method
         elif hasattr(state, "cities") and callable(state.cities):
+            # FileStorage
             cities = state.cities()
-        # Sort by city name
+        else:
+            cities = []
+
+        # sort cities alphabetically by name
         state_cities[state.id] = sorted(cities, key=lambda c: c.name if c.name else "")
 
     return render_template(
