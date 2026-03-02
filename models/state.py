@@ -27,13 +27,10 @@ class State(BaseModel, Base):
         """Initializes State"""
         super().__init__(*args, **kwargs)
 
-    if models.storage_t != "db":
-        @property
-        def cities(self):
-            """Return list of City instances related to this State"""
-            city_list = []
-            all_cities = models.storage.all(City)
-            for city in all_cities.values():
-                if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
+    @property
+    def cities(self):
+        """Return list of City objects linked to this State (FileStorage only)"""
+        if getenv('HBNB_TYPE_STORAGE') == 'db':
+            return []
+        all_cities = models.storage.all(City)
+        return [city for city in all_cities.values() if city.state_id == self.id]
